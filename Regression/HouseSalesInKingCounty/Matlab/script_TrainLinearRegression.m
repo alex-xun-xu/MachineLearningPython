@@ -49,18 +49,19 @@ for d_i = 18:21
 end
 
 %% Training Model
-X_te = X(1:3999,:);
-Y_te = Y(1:3999,:);
-X_tr = X(4000:end,:);
-Y_tr = Y(4000:end,:);
+X_te = X(1:4322,:);
+Y_te = Y(1:4322,:);
+X_tr = X(4323:end,:);
+Y_tr = Y(4323:end,:);
 
 W = (X_tr'*X_tr)\X_tr'*Y_tr;
+W = inv(X_tr'*X_tr+0.1*eye(size(X_tr,2)))*X_tr'*Y_tr;
 
-[RMSE_tr,MAE_tr,Y_hat_tr] = func_EvalPerf(X_tr,Y_tr,W)
+[RMSE_tr,MAE_tr,Y_hat_tr] = func_EvalPerf(X_tr,Y_tr,W);
 
 Y_te_hat = X_te*W;
 
-[RMSE_te,MAE_te,Y_hat_te] = func_EvalPerf(X_te,Y_te,W)
+[RMSE_te,MAE_te,Y_hat_te] = func_EvalPerf(X_te,Y_te,W);
 
 
 

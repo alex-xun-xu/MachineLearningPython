@@ -38,14 +38,15 @@ def LoadAllData(DatasetFilepath):
 #   Evaluate Performance
 #
 #   Compute RMSE and MAE as performance evaluation
-def EvalPerf(X_te,Y_te,W):
-    Y_te_hat = np.matmul(X_te,W)
+def EvalPerf(X,Y,W):
+    Y_hat = np.matmul(X,W)
     # Compute RMSE
-    tmp = Y_te_hat.shape
+    tmp = Y_hat.shape
     nSample = tmp[0]
-    RMSE = np.sqrt(1/nSample*(Y_te_hat-Y_te).T*(Y_te_hat-Y_te))
-    MAE = np.mean(np.abs(Y_te_hat - Y_te))
-    return {'RMSE':RMSE , 'MAE':MAE , 'Prediction':Y_te_hat}
+    RMSE = np.sqrt(1/nSample*(Y_hat-Y).T*(Y_hat-Y))
+    NRMSE = RMSE/(Y.max()-Y.min())
+    MAE = np.mean(np.abs(Y_hat - Y))
+    return {'RMSE':RMSE , 'NRMSE':NRMSE ,'MAE':MAE , 'Prediction':Y_hat}
 
 
 
@@ -72,7 +73,9 @@ def main():
         Y_tr = np.mat(Y[Split['TrainingIdx']])
 
         # Solve Linear Regression
-        W = np.linalg.inv(X_tr.T * X_tr) * X_tr.T * Y_tr
+        n = X_tr.shape[1]
+        gamma = 0.1
+        W = np.linalg.inv(X_tr.T * X_tr + gamma*np.identity(n)) * X_tr.T * Y_tr
 
         # Training Error
         Result = EvalPerf(X_tr, Y_tr, W)
